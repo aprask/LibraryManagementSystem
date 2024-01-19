@@ -1,6 +1,7 @@
 package org.libmansys.DB;
 
 import org.libmansys.Items.Book;
+import org.libmansys.Items.Item;
 
 import java.sql.*;
 import java.util.*;
@@ -139,5 +140,25 @@ public class BookDAO implements ReadCommands<Book> {
             throw new RuntimeException(e);
         }
         return booksBySpecifiedID;
+    }
+
+    @Override
+    public ArrayList<Book> retrieveOrderedListByYear() {
+        return null;
+    }
+
+    @Override
+    public int retrieveItemCount() {
+        return 0;
+    }
+
+    @Override
+    public Item retrieveRandomItem() {
+        return null;
+    }
+
+    @Override
+    public Item retrieveLatestItem() {
+        return null;
     }
 }

@@ -4,7 +4,7 @@ import org.libmansys.Items.Item;
 
 import java.util.Date;
 
-public interface WriteCommands<T> {
+public interface WriteCommands {
     void changeItemName(Item item, String name);
     void changeItemID(Item item, int ID);
     void changeItemPrice(Item item, double price);

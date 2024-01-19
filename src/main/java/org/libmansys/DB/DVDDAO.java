@@ -1,6 +1,7 @@
 package org.libmansys.DB;
 
 import org.libmansys.Items.DVD;
+import org.libmansys.Items.Item;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -96,6 +97,26 @@ public class DVDDAO implements ReadCommands<DVD> {
             throw new RuntimeException(e);
         }
         return dvdsBySpecifiedID;
+    }
+
+    @Override
+    public ArrayList<DVD> retrieveOrderedListByYear() {
+        return null;
+    }
+
+    @Override
+    public int retrieveItemCount() {
+        return 0;
+    }
+
+    @Override
+    public Item retrieveRandomItem() {
+        return null;
+    }
+
+    @Override
+    public Item retrieveLatestItem() {
+        return null;
     }
 
     public Connection getConnection() {
