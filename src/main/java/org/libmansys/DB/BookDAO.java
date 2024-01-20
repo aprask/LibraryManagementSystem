@@ -4,10 +4,12 @@ import org.libmansys.Items.Book;
 import org.libmansys.Items.Item;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 
-public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book> {
+public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteCommands {
     private final Connection connection;
 
     public BookDAO() {
@@ -20,11 +22,7 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book> {
 
     public static void main(String[] args) {
         BookDAO bookDAO = new BookDAO();
-        if(bookDAO.removeValue(bookDAO.retrieveAll(),25))
-        {
-            System.out.println("True");
-        }
-        else System.out.println("False");
+        bookDAO.changeISBNNumber(bookDAO.retrieveAll().get(0));
     }
 
     @Override
@@ -202,5 +200,138 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book> {
             throw new RuntimeException(e);
         }
         return false;
+    }
+
+    @Override
+    public void changeItemName(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET title = ? WHERE id = ?"))
+        {
+            System.out.println("Given " + item.getItemName() + ", what name would you like to substitute?");
+            String scannedName = scanner.next();
+            preparedStatement.setString(1,scannedName);
+            preparedStatement.setInt(2,ID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0) System.out.println("Title updated!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void changeItemID(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET id = ? WHERE id = ?"))
+        {
+            System.out.println("Given " + item.getItemID() + ", what ID would you like to substitute?");
+            int scannedID = scanner.nextInt();
+            preparedStatement.setInt(1,scannedID);
+            preparedStatement.setInt(2,ID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0) System.out.println("ID updated!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void changeItemPrice(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET price = ? WHERE id = ?"))
+        {
+            System.out.println("Given $" + item.getItemCost() + ", what price would you like to substitute?");
+            double scannedPrice = scanner.nextDouble();
+            preparedStatement.setDouble(1,scannedPrice);
+            preparedStatement.setInt(2,ID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0) System.out.println("Price updated!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void changeItemGenre(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        if (item instanceof Book) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET genre = ? WHERE id = ?"))
+            {
+                System.out.println("Given " + ((Book) item).getGenre() + ", what genre would you like to substitute?");
+                String scannedGenre = scanner.next();
+                preparedStatement.setString(1,scannedGenre);
+                preparedStatement.setInt(2,ID);
+                int rowsUpdated = preparedStatement.executeUpdate();
+                if(rowsUpdated > 0) System.out.println("Genre updated!");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void changeItemYear(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        if (item instanceof Book) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET publication_date = ? WHERE id = ?"))
+            {
+                System.out.println("Given " + ((Book) item).getYear() + ", what date would you like to substitute?");
+                System.out.println("Enter a date (yyyy-MM-dd):");
+                String dateString = scanner.next();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date newDate = dateFormat.parse(dateString);
+                preparedStatement.setDate(1,new java.sql.Date(newDate.getTime()));
+                preparedStatement.setInt(2,ID);
+                int rowsUpdated = preparedStatement.executeUpdate();
+                if(rowsUpdated > 0) System.out.println("Date updated!");
+            } catch (SQLException | ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    @Override
+    public void changeItemOwner(Item item) {
+        var scanner = new Scanner(System.in);
+        int ID = item.getItemID();
+        if (item instanceof Book) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET author = ? WHERE id = ?"))
+            {
+                System.out.println("Given " + ((Book) item).getAuthor() + ", what author's name would you like to substitute?");
+                String updatedAuthorName = scanner.next();
+                preparedStatement.setString(1,updatedAuthorName);
+                preparedStatement.setInt(2,ID);
+                int rowsUpdated = preparedStatement.executeUpdate();
+                if(rowsUpdated > 0) System.out.println("Author's name updated!");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    public void changeISBNNumber(Book book){
+        var scanner = new Scanner(System.in);
+        int ID = book.getItemID();
+        try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET isbn = ? WHERE id = ?")) {
+            System.out.println("Given " + book.getIsbn() + ", what ISBN would you like to substitute?");
+            String updatedISBNNumber = scanner.next();
+            preparedStatement.setString(1,updatedISBNNumber);
+            preparedStatement.setInt(2,ID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0) System.out.println("ISBN number updated!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void restockItem(Item item) {
+
+    }
+
+    @Override
+    public void createItem(Item item) {
+
     }
 }
