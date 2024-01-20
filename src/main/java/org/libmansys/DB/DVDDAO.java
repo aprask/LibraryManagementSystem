@@ -134,6 +134,12 @@ public class DVDDAO implements ReadCommands<DVD> {
     }
 
     @Override
+    public ArrayList<DVD> retrieveInAlphabeticalOrder(ArrayList<DVD> itemList) {
+        itemList.sort(Comparator.comparing(DVD::getItemName, String.CASE_INSENSITIVE_ORDER));
+        return itemList;
+    }
+
+    @Override
     public int retrieveItemCount(ArrayList<DVD> itemList) {
         return itemList.size();
     }

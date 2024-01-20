@@ -7,53 +7,33 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
-public class BookDAO implements ReadCommands<Book> {
+public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book> {
     private final Connection connection;
+
     public BookDAO() {
         this.connection = DatabaseConnector.connect();
     }
+
     public Connection getConnection() {
         return connection;
     }
-    public ArrayList<Book> retrieveBooksByISBN(String isbnNum)
-    {
-        ArrayList<Book> booksBySpecifiedISBN = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM books WHERE isbn = ?")) {
-            preparedStatement.setString(1, isbnNum);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next())
-            {
-                String isbn = resultSet.getString("isbn");
-                if(isbn.equals(isbnNum))
-                {
-                    String title = resultSet.getString("title");
-                    int id = resultSet.getInt("id");
-                    double cost = resultSet.getDouble("price");
-                    String author = resultSet.getString("author");
-                    Date publishedDate = resultSet.getDate("publication_date");
-                    String genre = resultSet.getString("genre");
-                    booksBySpecifiedISBN.add(new Book(title,id,cost,author,isbn,publishedDate,genre));
-                }
-            }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        return booksBySpecifiedISBN;
-    }
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         BookDAO bookDAO = new BookDAO();
+        if(bookDAO.removeValue(bookDAO.retrieveAll(),25))
+        {
+            System.out.println("True");
+        }
+        else System.out.println("False");
     }
+
     @Override
     public ArrayList<Book> retrieveAll() {
         ArrayList<Book> books = new ArrayList<>();
-        try(Statement statement = connection.createStatement()){
+        try (Statement statement = connection.createStatement()) {
             String queryCommand = "SELECT * FROM books";
             ResultSet resultSet = statement.executeQuery(queryCommand);
-            while(resultSet.next())
-            {
+            while (resultSet.next()) {
                 String title = resultSet.getString("title");
                 int id = resultSet.getInt("id");
                 double cost = resultSet.getDouble("price");
@@ -61,7 +41,7 @@ public class BookDAO implements ReadCommands<Book> {
                 String isbn = resultSet.getString("isbn");
                 Date publishedDate = resultSet.getDate("publication_date");
                 String genre = resultSet.getString("genre");
-                books.add(new Book(title,id,cost,author,isbn,publishedDate,genre));
+                books.add(new Book(title, id, cost, author, isbn, publishedDate, genre));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -72,11 +52,10 @@ public class BookDAO implements ReadCommands<Book> {
     @Override
     public ArrayList<String> retrieveNames() {
         ArrayList<String> bookTitles = new ArrayList<>();
-        try(Statement statement = connection.createStatement()){
+        try (Statement statement = connection.createStatement()) {
             String queryCommand = "SELECT * FROM books";
             ResultSet resultSet = statement.executeQuery(queryCommand);
-            while(resultSet.next())
-            {
+            while (resultSet.next()) {
                 String title = resultSet.getString("title");
                 bookTitles.add(title);
             }
@@ -92,22 +71,19 @@ public class BookDAO implements ReadCommands<Book> {
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM books WHERE author = ?")) {
             preparedStatement.setString(1, maker);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next())
-            {
+            while (resultSet.next()) {
                 String author = resultSet.getString("author");
-                if(author.equalsIgnoreCase(maker))
-                {
+                if (author.equalsIgnoreCase(maker)) {
                     String title = resultSet.getString("title");
                     int id = resultSet.getInt("id");
                     double cost = resultSet.getDouble("price");
                     String isbn = resultSet.getString("isbn");
                     Date publishedDate = resultSet.getDate("publication_date");
                     String genre = resultSet.getString("genre");
-                    booksBySpecifiedAuthor.add(new Book(title,id,cost,author,isbn,publishedDate,genre));
+                    booksBySpecifiedAuthor.add(new Book(title, id, cost, author, isbn, publishedDate, genre));
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -120,22 +96,19 @@ public class BookDAO implements ReadCommands<Book> {
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM books WHERE id = ?")) {
             preparedStatement.setInt(1, ID);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next())
-            {
+            while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                if(ID == id)
-                {
+                if (ID == id) {
                     String title = resultSet.getString("title");
                     double cost = resultSet.getDouble("price");
                     String isbn = resultSet.getString("isbn");
                     String author = resultSet.getString("author");
                     Date publishedDate = resultSet.getDate("publication_date");
                     String genre = resultSet.getString("genre");
-                    booksBySpecifiedID.add(new Book(title,id,cost,author,isbn,publishedDate,genre));
+                    booksBySpecifiedID.add(new Book(title, id, cost, author, isbn, publishedDate, genre));
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return booksBySpecifiedID;
@@ -170,6 +143,13 @@ public class BookDAO implements ReadCommands<Book> {
         sortedBooks.sort(Comparator.comparing(Book::getYear));
         return sortedBooks;
     }
+
+    @Override
+    public ArrayList<Book> retrieveInAlphabeticalOrder(ArrayList<Book> itemList) {
+        itemList.sort(Comparator.comparing(Book::getItemName, String.CASE_INSENSITIVE_ORDER));
+        return itemList;
+    }
+
     @Override
     public int retrieveItemCount(ArrayList<Book> itemList) {
         return itemList.size();
@@ -178,12 +158,49 @@ public class BookDAO implements ReadCommands<Book> {
     @Override
     public Item retrieveRandomItem(ArrayList<Book> itemList) {
         Random random = new Random();
-        int randomIndex = random.nextInt(0,retrieveItemCount(this.retrieveAll()));
+        int randomIndex = random.nextInt(0, retrieveItemCount(this.retrieveAll()));
         return itemList.get(randomIndex);
     }
 
     @Override
     public Item retrieveLatestItem(ArrayList<Book> itemList) {
-        return itemList.get(itemList.size()-1);
+        return itemList.get(itemList.size() - 1);
+    }
+
+    public ArrayList<Book> retrieveBooksByISBN(String isbnNum) {
+        ArrayList<Book> booksBySpecifiedISBN = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM books WHERE isbn = ?")) {
+            preparedStatement.setString(1, isbnNum);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String isbn = resultSet.getString("isbn");
+                if (isbn.equals(isbnNum)) {
+                    String title = resultSet.getString("title");
+                    int id = resultSet.getInt("id");
+                    double cost = resultSet.getDouble("price");
+                    String author = resultSet.getString("author");
+                    Date publishedDate = resultSet.getDate("publication_date");
+                    String genre = resultSet.getString("genre");
+                    booksBySpecifiedISBN.add(new Book(title, id, cost, author, isbn, publishedDate, genre));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return booksBySpecifiedISBN;
+    }
+    @Override
+    public boolean removeValue(ArrayList<Book> itemList, int ID) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM books WHERE id = ?")) {
+            preparedStatement.setInt(1, ID);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }

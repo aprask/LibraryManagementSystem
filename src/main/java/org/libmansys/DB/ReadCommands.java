@@ -11,6 +11,7 @@ public interface ReadCommands<T> {
     ArrayList<T> retrieveByID(int ID);
     ArrayList<T> retrieveInDescendingOrder(ArrayList<T> itemList);
     ArrayList<T> retrieveInAscendingOrder(ArrayList<T> itemList);
+    ArrayList<T> retrieveInAlphabeticalOrder(ArrayList<T> itemList);
     int retrieveItemCount(ArrayList<T> itemList);
     Item retrieveRandomItem(ArrayList<T> itemList);
     Item retrieveLatestItem(ArrayList<T> itemList);

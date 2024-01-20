@@ -129,6 +129,13 @@ public class CDDAO implements ReadCommands<CD> {
         sortedCDs.sort(Comparator.comparing(CD::getYear));
         return sortedCDs;
     }
+
+    @Override
+    public ArrayList<CD> retrieveInAlphabeticalOrder(ArrayList<CD> itemList) {
+        itemList.sort(Comparator.comparing(CD::getItemName, String.CASE_INSENSITIVE_ORDER));
+        return itemList;
+    }
+
     @Override
     public int retrieveItemCount(ArrayList<CD> itemList) {
         return itemList.size();
