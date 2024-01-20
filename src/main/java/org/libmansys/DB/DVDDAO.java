@@ -1,11 +1,15 @@
 package org.libmansys.DB;
 
+import org.libmansys.Items.Book;
+import org.libmansys.Items.CD;
 import org.libmansys.Items.DVD;
 import org.libmansys.Items.Item;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Random;
 
 public class DVDDAO implements ReadCommands<DVD> {
     private final Connection connection;
@@ -100,25 +104,50 @@ public class DVDDAO implements ReadCommands<DVD> {
     }
 
     @Override
-    public ArrayList<DVD> retrieveOrderedListByYear() {
-        return null;
+    public ArrayList<DVD> retrieveInDescendingOrder(ArrayList<DVD> itemList) {
+        ArrayList<DVD> sortedDVDs = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            DVD currentDVD = itemList.get(i);
+            if (currentDVD != null) {
+                sortedDVDs.add(currentDVD);
+            }
+            i++;
+        }
+        sortedDVDs.sort(Comparator.comparing(DVD::getYear, Comparator.reverseOrder()));
+        return sortedDVDs;
     }
 
     @Override
-    public int retrieveItemCount() {
-        return 0;
+    public ArrayList<DVD> retrieveInAscendingOrder(ArrayList<DVD> itemList) {
+        ArrayList<DVD> sortedDVDs = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            DVD currentDVD = itemList.get(i);
+            if (currentDVD != null) {
+                sortedDVDs.add(currentDVD);
+            }
+            i++;
+        }
+        sortedDVDs.sort(Comparator.comparing(DVD::getYear));
+        return sortedDVDs;
     }
 
     @Override
-    public Item retrieveRandomItem() {
-        return null;
+    public int retrieveItemCount(ArrayList<DVD> itemList) {
+        return itemList.size();
     }
 
     @Override
-    public Item retrieveLatestItem() {
-        return null;
+    public Item retrieveRandomItem(ArrayList<DVD> itemList) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(0,retrieveItemCount(this.retrieveAll()));
+        return itemList.get(randomIndex);
     }
-
+    @Override
+    public Item retrieveLatestItem(ArrayList<DVD> itemList) {
+        return itemList.get(itemList.size()-1);
+    }
     public Connection getConnection() {
         return connection;
     }

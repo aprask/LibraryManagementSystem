@@ -1,11 +1,14 @@
 package org.libmansys.DB;
 
+import org.libmansys.Items.Book;
 import org.libmansys.Items.CD;
 import org.libmansys.Items.Item;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Random;
 
 public class CDDAO implements ReadCommands<CD> {
     private final Connection connection;
@@ -98,23 +101,49 @@ public class CDDAO implements ReadCommands<CD> {
     }
 
     @Override
-    public ArrayList<CD> retrieveOrderedListByYear() {
-        return null;
+    public ArrayList<CD> retrieveInDescendingOrder(ArrayList<CD> itemList) {
+        ArrayList<CD> sortedCDs = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            CD currentCD = itemList.get(i);
+            if (currentCD != null) {
+                sortedCDs.add(currentCD);
+            }
+            i++;
+        }
+        sortedCDs.sort(Comparator.comparing(CD::getYear, Comparator.reverseOrder()));
+        return sortedCDs;
     }
 
     @Override
-    public int retrieveItemCount() {
-        return 0;
+    public ArrayList<CD> retrieveInAscendingOrder(ArrayList<CD> itemList) {
+        ArrayList<CD> sortedCDs = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            CD currentCD = itemList.get(i);
+            if (currentCD != null) {
+                sortedCDs.add(currentCD);
+            }
+            i++;
+        }
+        sortedCDs.sort(Comparator.comparing(CD::getYear));
+        return sortedCDs;
+    }
+    @Override
+    public int retrieveItemCount(ArrayList<CD> itemList) {
+        return itemList.size();
     }
 
     @Override
-    public Item retrieveRandomItem() {
-        return null;
+    public Item retrieveRandomItem(ArrayList<CD> itemList) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(0,retrieveItemCount(this.retrieveAll()));
+        return itemList.get(randomIndex);
     }
 
     @Override
-    public Item retrieveLatestItem() {
-        return null;
+    public Item retrieveLatestItem(ArrayList<CD> itemList) {
+        return itemList.get(itemList.size()-1);
     }
 
     public Connection getConnection() {

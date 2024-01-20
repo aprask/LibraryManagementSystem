@@ -46,7 +46,6 @@ public class BookDAO implements ReadCommands<Book> {
     {
         BookDAO bookDAO = new BookDAO();
     }
-
     @Override
     public ArrayList<Book> retrieveAll() {
         ArrayList<Book> books = new ArrayList<>();
@@ -143,22 +142,48 @@ public class BookDAO implements ReadCommands<Book> {
     }
 
     @Override
-    public ArrayList<Book> retrieveOrderedListByYear() {
-        return null;
+    public ArrayList<Book> retrieveInDescendingOrder(ArrayList<Book> itemList) {
+        ArrayList<Book> sortedBooks = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            Book currentBook = itemList.get(i);
+            if (currentBook != null) {
+                sortedBooks.add(currentBook);
+            }
+            i++;
+        }
+        sortedBooks.sort(Comparator.comparing(Book::getYear, Comparator.reverseOrder()));
+        return sortedBooks;
     }
 
     @Override
-    public int retrieveItemCount() {
-        return 0;
+    public ArrayList<Book> retrieveInAscendingOrder(ArrayList<Book> itemList) {
+        ArrayList<Book> sortedBooks = new ArrayList<>();
+        int i = 0;
+        while (i < itemList.size()) {
+            Book currentBook = itemList.get(i);
+            if (currentBook != null) {
+                sortedBooks.add(currentBook);
+            }
+            i++;
+        }
+        sortedBooks.sort(Comparator.comparing(Book::getYear));
+        return sortedBooks;
+    }
+    @Override
+    public int retrieveItemCount(ArrayList<Book> itemList) {
+        return itemList.size();
     }
 
     @Override
-    public Item retrieveRandomItem() {
-        return null;
+    public Item retrieveRandomItem(ArrayList<Book> itemList) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(0,retrieveItemCount(this.retrieveAll()));
+        return itemList.get(randomIndex);
     }
 
     @Override
-    public Item retrieveLatestItem() {
-        return null;
+    public Item retrieveLatestItem(ArrayList<Book> itemList) {
+        return itemList.get(itemList.size()-1);
     }
 }
