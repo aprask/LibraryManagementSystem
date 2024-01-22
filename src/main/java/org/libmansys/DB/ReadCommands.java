@@ -4,7 +4,7 @@ import org.libmansys.Items.Item;
 
 import java.util.ArrayList;
 
-public interface ReadCommands<T> {
+public interface ReadCommands<T extends Item> {
     ArrayList<T> retrieveAll();
     ArrayList<String> retrieveNames();
     ArrayList<T> retrieveByMaker(String maker);

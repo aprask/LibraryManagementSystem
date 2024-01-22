@@ -22,7 +22,7 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
 
     public static void main(String[] args) {
         BookDAO bookDAO = new BookDAO();
-        bookDAO.changeISBNNumber(bookDAO.retrieveAll().get(0));
+        bookDAO.createItem();
     }
 
     @Override
@@ -310,6 +310,65 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
             }
         }
     }
+    @Override
+    public void restockItem(Item item) {
+        int ID = item.getItemID();
+        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET isRented = 0 WHERE id = ?")) {
+            preparedStatement.setInt(1, ID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) System.out.println("Item restocked!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    @Override
+    public void createItem() {
+        var scanner = new Scanner(System.in);
+            try(PreparedStatement preparedStatement =
+                        connection.prepareStatement
+                                ("INSERT INTO books (title, id, price, author, isbn, publication_date, genre, isRented) " +
+                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"))
+            {
+                System.out.println("Name of the book? ");
+                String nameOfBook = scanner.next();
+
+                System.out.println("ID of the book? ");
+                int idOfBook = scanner.nextInt();
+
+                System.out.println("Price of the book? ");
+                double priceOfBook = scanner.nextDouble();
+
+                System.out.println("Author of the book? ");
+                String authorOfBook = scanner.next();
+
+                System.out.println("ISBN? ");
+                String isbnOfBook = scanner.next();
+
+                System.out.println("Publication date? ");
+                System.out.println("Enter a date (yyyy-MM-dd): ");
+                String dateString = scanner.next();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateOfBook = dateFormat.parse(dateString);
+
+                System.out.println("Genre of the book? ");
+                String genreOfBook = scanner.next();
+
+                preparedStatement.setString(1, nameOfBook);
+                preparedStatement.setInt(2,idOfBook);
+                preparedStatement.setDouble(3, priceOfBook);
+                preparedStatement.setString(4, authorOfBook);
+                preparedStatement.setString(5, isbnOfBook);
+                preparedStatement.setDate(6, new java.sql.Date(dateOfBook.getTime()));
+                preparedStatement.setString(7, genreOfBook);
+                preparedStatement.setInt(8, 0);
+
+                int rowsInserted = preparedStatement.executeUpdate();
+                if(rowsInserted > 0 ) System.out.println("Book created successfully!");
+            } catch (SQLException | ParseException e){
+                throw new RuntimeException(e);
+        }
+    }
     public void changeISBNNumber(Book book){
         var scanner = new Scanner(System.in);
         int ID = book.getItemID();
@@ -323,15 +382,5 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void restockItem(Item item) {
-
-    }
-
-    @Override
-    public void createItem(Item item) {
-
     }
 }

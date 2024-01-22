@@ -12,6 +12,6 @@ public interface WriteCommands {
     void changeItemYear(Item item);
     void changeItemOwner(Item item);
     void restockItem(Item item);
-    void createItem(Item item);
+    void createItem();
 
 }
