@@ -1,6 +1,5 @@
 package org.libmansys.DB;
 
-import org.libmansys.Items.Book;
 import org.libmansys.Items.DVD;
 import org.libmansys.Items.Item;
 
