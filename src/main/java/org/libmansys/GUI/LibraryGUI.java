@@ -5,10 +5,12 @@ import org.libmansys.DB.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import org.libmansys.Items.*;
 public class LibraryGUI extends JFrame implements ActionListener {
-    private static BookDAO bookDAO;
-    private static CDDAO cddao;
-    private static DVDDAO dvddao;
+    private static BookDAO bookDAO = new BookDAO();
+    private static CDDAO cddao = new CDDAO();
+    private static DVDDAO dvddao = new DVDDAO();
     JMenuItem rentBook;
     JMenuItem rentCD;
     JMenuItem rentDVD;
@@ -30,8 +32,8 @@ public class LibraryGUI extends JFrame implements ActionListener {
     JMenuItem getItemCount;
     JMenuItem getRandomItem;
     JMenuItem getLatestItem;
-
     JMenuItem deleteItem;
+    JFrame paneFrame;
     public LibraryGUI()
     {
         buildGUI();
@@ -152,36 +154,121 @@ public class LibraryGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==rentBook)
         {
-            System.out.println("Rent Book");
+            JOptionPane.showInputDialog(paneFrame,"Rent Book?");
         }
         else if(e.getSource()==rentCD)
         {
-            System.out.println("Rent CD");
+            JOptionPane.showInputDialog(paneFrame,"Rent CD?");
         }
         else if(e.getSource()==rentDVD)
         {
-            System.out.println("Rent DVD");
+            JOptionPane.showInputDialog(paneFrame,"Rent DVD?");
         }
         else if(e.getSource()==exitProgram)
         {
-            System.out.println("Exit Program");
             System.exit(0);
         }
         else if(e.getSource()==alterName)
         {
-            System.out.println("Change Name");
+            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
+            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which book (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                Book book = bookDAO.retrieveByID(convertedID).get(0);
+                bookDAO.changeItemName(book);
+            }
+            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which cd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                CD cd = cddao.retrieveByID(convertedID).get(0);
+                cddao.changeItemName(cd);
+            }
+            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which dvd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                DVD dvd = dvddao.retrieveByID(convertedID).get(0);
+                dvddao.changeItemName(dvd);
+            }
+
         }
         else if(e.getSource()==alterID)
         {
-            System.out.println("Change ID");
+            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
+            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which book (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                Book book = bookDAO.retrieveByID(convertedID).get(0);
+                bookDAO.changeItemID(book);
+            }
+            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which cd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                CD cd = cddao.retrieveByID(convertedID).get(0);
+                cddao.changeItemID(cd);
+            }
+            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which dvd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                DVD dvd = dvddao.retrieveByID(convertedID).get(0);
+                dvddao.changeItemID(dvd);
+            }
         }
         else if(e.getSource()==alterPrice)
         {
-            System.out.println("Change Price");
+            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
+            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which book (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                Book book = bookDAO.retrieveByID(convertedID).get(0);
+                bookDAO.changeItemPrice(book);
+            }
+            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which cd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                CD cd = cddao.retrieveByID(convertedID).get(0);
+                cddao.changeItemPrice(cd);
+            }
+            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which dvd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                DVD dvd = dvddao.retrieveByID(convertedID).get(0);
+                dvddao.changeItemPrice(dvd);
+            }
+
         }
         else if(e.getSource()==alterGenre)
         {
-            System.out.println("Change Genre");
+            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
+            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which book (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                Book book = bookDAO.retrieveByID(convertedID).get(0);
+                bookDAO.changeItemPrice(book);
+            }
+            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which cd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                CD cd = cddao.retrieveByID(convertedID).get(0);
+                cddao.changeItemPrice(cd);
+            }
+            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
+            {
+                String ID = JOptionPane.showInputDialog(paneFrame,"Which dvd (select by id)? ");
+                int convertedID = Integer.parseInt(ID);
+                DVD dvd = dvddao.retrieveByID(convertedID).get(0);
+                dvddao.changeItemPrice(dvd);
+            }
         }
         else if(e.getSource()==alterDate)
         {
