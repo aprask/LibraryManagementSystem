@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 public class LibraryGUI extends JFrame implements ActionListener {
+    private static BookDAO bookDAO;
+    private static CDDAO cddao;
+    private static DVDDAO dvddao;
     JMenuItem rentBook;
     JMenuItem rentCD;
     JMenuItem rentDVD;
@@ -48,8 +51,6 @@ public class LibraryGUI extends JFrame implements ActionListener {
         rentBook = new JMenuItem("Rent Book");
         rentCD = new JMenuItem("Rent CD");
         rentDVD = new JMenuItem("Rent DVD");
-
-        exitProgram = new JMenuItem("Exit");
 
         alterName = new JMenuItem("Change Item Name");
         alterID = new JMenuItem("Change Item ID");
@@ -123,6 +124,11 @@ public class LibraryGUI extends JFrame implements ActionListener {
         rentMenu.add(rentDVD);
         rentDVD.addActionListener(this);
 
+        exitProgram = new JMenuItem("Exit");
+        menu.add(exitMenu);
+        exitMenu.add(exitProgram);
+        exitProgram.addActionListener(this);
+
         JLabel label = new JLabel();
         label.setBackground(Color.white);
         label.setIcon(null);
@@ -159,6 +165,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
         else if(e.getSource()==exitProgram)
         {
             System.out.println("Exit Program");
+            System.exit(0);
         }
         else if(e.getSource()==alterName)
         {
