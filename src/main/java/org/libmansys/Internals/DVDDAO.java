@@ -1,8 +1,9 @@
-package org.libmansys.DB;
+package org.libmansys.Internals;
 
 import org.libmansys.Items.DVD;
 import org.libmansys.Items.Item;
 
+import javax.swing.*;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -178,8 +179,8 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET title = ? WHERE id = ?"))
         {
-            System.out.println("Given " + item.getItemName() + ", what name would you like to substitute?");
-            String scannedName = scanner.next();
+            String message = "Given " + item.getItemName() + ", what name would you like to substitute?";
+            String scannedName = JOptionPane.showInputDialog(message);
             preparedStatement.setString(1,scannedName);
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
@@ -194,9 +195,9 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET id = ? WHERE id = ?"))
         {
-            System.out.println("Given " + item.getItemID() + ", what ID would you like to substitute?");
-            int scannedID = scanner.nextInt();
-            preparedStatement.setInt(1,scannedID);
+            String message = "Given " + item.getItemID() + ", what ID would you like to substitute?";
+            String scannedID = JOptionPane.showInputDialog(message);
+            preparedStatement.setInt(1,Integer.parseInt(scannedID));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
             if(rowsUpdated > 0) System.out.println("ID updated!");
@@ -211,9 +212,9 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET price = ? WHERE id = ?"))
         {
-            System.out.println("Given $" + item.getItemCost() + ", what price would you like to substitute?");
-            double scannedPrice = scanner.nextDouble();
-            preparedStatement.setDouble(1,scannedPrice);
+            String message = "Given " + item.getItemCost() + ", what price would you like to substitute?";
+            String scannedPrice = JOptionPane.showInputDialog(message);
+            preparedStatement.setDouble(1,Integer.parseInt(scannedPrice));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
             if(rowsUpdated > 0) System.out.println("Price updated!");
@@ -243,16 +244,14 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
 
     @Override
     public void changeItemYear(Item item) {
-        var scanner = new Scanner(System.in);
         int ID = item.getItemID();
         if (item instanceof DVD) {
             try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET publication_date = ? WHERE id = ?"))
             {
-                System.out.println("Given " + ((DVD) item).getYear() + ", what date would you like to substitute?");
-                System.out.println("Enter a date (yyyy-MM-dd):");
-                String dateString = scanner.next();
+                String message = "Given " + ((DVD) item).getYear() + ", what date would you like to substitute? \n(yyyy-MM-dd): ";
+                String scannedDate = JOptionPane.showInputDialog(message);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date newDate = (Date) dateFormat.parse(dateString);
+                java.util.Date newDate = dateFormat.parse(scannedDate);
                 preparedStatement.setDate(1,new java.sql.Date(newDate.getTime()));
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
@@ -269,9 +268,9 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
         if (item instanceof DVD) {
             try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET author = ? WHERE id = ?"))
             {
-                System.out.println("Given " + ((DVD) item).getArtist() + ", what director's name would you like to substitute?");
-                String updatedDirectorName = scanner.next();
-                preparedStatement.setString(1,updatedDirectorName);
+                String message = "Given " + ((DVD) item).getArtist() + ", what director's name would you like to substitute?";
+                String updatedAuthorName = JOptionPane.showInputDialog(message);
+                preparedStatement.setString(1,updatedAuthorName);
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
                 if(rowsUpdated > 0) System.out.println("Director's name updated!");
@@ -300,31 +299,19 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                             ("INSERT INTO books (title, id, price, director, release_date, genre, isRented) " +
                                     "VALUES (?, ?, ?, ?, ?, ?, ?)"))
         {
-            System.out.println("Name of the dvd? ");
-            String nameOfDVD = scanner.next();
-
-            System.out.println("ID of the dvd? ");
-            int idOfDVD = scanner.nextInt();
-
-            System.out.println("Price of the dvd? ");
-            double priceOfDVD = scanner.nextDouble();
-
-            System.out.println("Director of the dvd? ");
-            String directorOfDVD = scanner.next();
-
-            System.out.println("Release date? ");
-            System.out.println("Enter a date (yyyy-MM-dd): ");
-            String dateString = scanner.next();
+            String nameOfDVD = JOptionPane.showInputDialog("Name? ");
+            int idOfDVD = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            double priceOfDVD = Double.parseDouble(JOptionPane.showInputDialog("Price? "));
+            String authorOfDVD = JOptionPane.showInputDialog("Author? ");
+            String dateString = JOptionPane.showInputDialog("Enter a publication date (yyyy-MM-dd): ");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateOfDVD = (Date) dateFormat.parse(dateString);
-
-            System.out.println("Genre of the book? ");
-            String genreOfDVD = scanner.next();
+            java.util.Date dateOfDVD = dateFormat.parse(dateString);
+            String genreOfDVD = JOptionPane.showInputDialog("Genre of the book? ");
 
             preparedStatement.setString(1, nameOfDVD);
             preparedStatement.setInt(2,idOfDVD);
             preparedStatement.setDouble(3, priceOfDVD);
-            preparedStatement.setString(4, directorOfDVD);
+            preparedStatement.setString(4, authorOfDVD);
             preparedStatement.setDate(5, new java.sql.Date(dateOfDVD.getTime()));
             preparedStatement.setString(6, genreOfDVD);
             preparedStatement.setInt(7, 0);
@@ -334,5 +321,23 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
         } catch (SQLException | ParseException e){
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean isRented(Item item)
+    {
+        int ID = item.getItemID();
+        int currentIsRentedValue = 0;
+        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT isRented FROM dvds WHERE id = ?")) {
+            selectStatement.setInt(1, ID);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                currentIsRentedValue = resultSet.getInt("isRented");
+                if(currentIsRentedValue == 0) return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }

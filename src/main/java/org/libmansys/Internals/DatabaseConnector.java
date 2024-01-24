@@ -1,4 +1,4 @@
-package org.libmansys.DB;
+package org.libmansys.Internals;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

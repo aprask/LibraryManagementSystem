@@ -1,4 +1,4 @@
-package org.libmansys.DB;
+package org.libmansys.Internals;
 
 import org.libmansys.Items.Item;
 

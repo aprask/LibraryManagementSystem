@@ -1,8 +1,6 @@
-package org.libmansys.DB;
+package org.libmansys.Internals;
 
 import org.libmansys.Items.Item;
-
-import java.util.Date;
 
 public interface WriteCommands {
     void changeItemName(Item item);
@@ -13,5 +11,6 @@ public interface WriteCommands {
     void changeItemOwner(Item item);
     void restockItem(Item item);
     void createItem();
+    boolean isRented(Item item);
 
 }

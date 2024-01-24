@@ -1,8 +1,9 @@
-package org.libmansys.DB;
+package org.libmansys.Internals;
 
 import org.libmansys.Items.CD;
 import org.libmansys.Items.Item;
 
+import javax.swing.*;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -177,8 +178,8 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET title = ? WHERE id = ?"))
         {
-            System.out.println("Given " + item.getItemName() + ", what name would you like to substitute?");
-            String scannedName = scanner.next();
+            String message = "Given " + item.getItemName() + ", what name would you like to substitute?";
+            String scannedName = JOptionPane.showInputDialog(message);
             preparedStatement.setString(1,scannedName);
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
@@ -193,9 +194,9 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET id = ? WHERE id = ?"))
         {
-            System.out.println("Given " + item.getItemID() + ", what ID would you like to substitute?");
-            int scannedID = scanner.nextInt();
-            preparedStatement.setInt(1,scannedID);
+            String message = "Given " + item.getItemID() + ", what ID would you like to substitute?";
+            String scannedID = JOptionPane.showInputDialog(message);
+            preparedStatement.setInt(1,Integer.parseInt(scannedID));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
             if(rowsUpdated > 0) System.out.println("ID updated!");
@@ -210,9 +211,9 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         int ID = item.getItemID();
         try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET price = ? WHERE id = ?"))
         {
-            System.out.println("Given $" + item.getItemCost() + ", what price would you like to substitute?");
-            double scannedPrice = scanner.nextDouble();
-            preparedStatement.setDouble(1,scannedPrice);
+            String message = "Given " + item.getItemCost() + ", what price would you like to substitute?";
+            String scannedPrice = JOptionPane.showInputDialog(message);
+            preparedStatement.setDouble(1,Integer.parseInt(scannedPrice));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
             if(rowsUpdated > 0) System.out.println("Price updated!");
@@ -242,16 +243,14 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
 
     @Override
     public void changeItemYear(Item item) {
-        var scanner = new Scanner(System.in);
         int ID = item.getItemID();
         if (item instanceof CD) {
             try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET publication_date = ? WHERE id = ?"))
             {
-                System.out.println("Given " + ((CD) item).getYear() + ", what date would you like to substitute?");
-                System.out.println("Enter a date (yyyy-MM-dd):");
-                String dateString = scanner.next();
+                String message = "Given " + ((CD) item).getYear() + ", what date would you like to substitute? \n(yyyy-MM-dd): ";
+                String scannedDate = JOptionPane.showInputDialog(message);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date newDate = (Date) dateFormat.parse(dateString);
+                java.util.Date newDate = dateFormat.parse(scannedDate);
                 preparedStatement.setDate(1,new java.sql.Date(newDate.getTime()));
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
@@ -268,9 +267,9 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         if (item instanceof CD) {
             try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET artist = ? WHERE id = ?"))
             {
-                System.out.println("Given " + ((CD) item).getArtist() + ", what artist's name would you like to substitute?");
-                String updatedArtistName = scanner.next();
-                preparedStatement.setString(1,updatedArtistName);
+                String message = "Given " + ((CD) item).getArtist() + ", what artist's name would you like to substitute?";
+                String updatedAuthorName = JOptionPane.showInputDialog(message);
+                preparedStatement.setString(1,updatedAuthorName);
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
                 if(rowsUpdated > 0) System.out.println("Artist's name updated!");
@@ -299,31 +298,19 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
                             ("INSERT INTO cds (title, id, price, artist, publication_date, genre, isRented) " +
                                     "VALUES (?, ?, ?, ?, ?, ?, ?)"))
         {
-            System.out.println("Name of the cd? ");
-            String nameOfCD = scanner.next();
-
-            System.out.println("ID of the cd? ");
-            int idOfCD = scanner.nextInt();
-
-            System.out.println("Price of the cd? ");
-            double priceOfCD = scanner.nextDouble();
-
-            System.out.println("Artist of the cd? ");
-            String artistOfCD = scanner.next();
-
-            System.out.println("Publication date? ");
-            System.out.println("Enter a date (yyyy-MM-dd): ");
-            String dateString = scanner.next();
+            String nameOfCD = JOptionPane.showInputDialog("Name? ");
+            int idOfCD = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            double priceOfCD = Double.parseDouble(JOptionPane.showInputDialog("Price? "));
+            String authorOfCD = JOptionPane.showInputDialog("Author? ");
+            String dateString = JOptionPane.showInputDialog("Enter a publication date (yyyy-MM-dd): ");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateOfCD = (Date) dateFormat.parse(dateString);
-
-            System.out.println("Genre of the cd? ");
-            String genreOfCD = scanner.next();
+            java.util.Date dateOfCD = dateFormat.parse(dateString);
+            String genreOfCD = JOptionPane.showInputDialog("Genre of the book? ");
 
             preparedStatement.setString(1, nameOfCD);
             preparedStatement.setInt(2,idOfCD);
             preparedStatement.setDouble(3, priceOfCD);
-            preparedStatement.setString(4, artistOfCD);
+            preparedStatement.setString(4, authorOfCD);
             preparedStatement.setDate(5, new java.sql.Date(dateOfCD.getTime()));
             preparedStatement.setString(6, genreOfCD);
             preparedStatement.setInt(7, 0);
@@ -333,6 +320,24 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         } catch (SQLException | ParseException e){
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean isRented(Item item)
+    {
+        int ID = item.getItemID();
+        int currentIsRentedValue = 0;
+        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT isRented FROM cds WHERE id = ?")) {
+            selectStatement.setInt(1, ID);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                currentIsRentedValue = resultSet.getInt("isRented");
+                if(currentIsRentedValue == 0) return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
     public static void main(String[] args)
     {
