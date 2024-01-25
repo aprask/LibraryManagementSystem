@@ -141,11 +141,10 @@ public class LibraryMenu extends JFrame implements ActionListener {
         label.setBackground(Color.white);
         label.setIcon(null);
         label.setText("Library Management System");
-        label.setFont(new Font("MV Boli", Font.BOLD, 50));
+        label.setFont(new Font("Serif", Font.BOLD, 50));
         label.setHorizontalTextPosition(JLabel.CENTER);
         label.setVerticalAlignment(JLabel.TOP);
         label.setOpaque(false);
-
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1000,1000);
@@ -247,21 +246,21 @@ public class LibraryMenu extends JFrame implements ActionListener {
                 String ID = JOptionPane.showInputDialog(paneFrame,"Which book (select by id)? ");
                 int convertedID = Integer.parseInt(ID);
                 Book book = bookdao.retrieveByID(convertedID).get(0);
-                bookdao.changeItemPrice(book);
+                bookdao.changeItemGenre(book);
             }
             else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
             {
                 String ID = JOptionPane.showInputDialog(paneFrame,"Which cd (select by id)? ");
                 int convertedID = Integer.parseInt(ID);
                 CD cd = cddao.retrieveByID(convertedID).get(0);
-                cddao.changeItemPrice(cd);
+                cddao.changeItemGenre(cd);
             }
             else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
             {
                 String ID = JOptionPane.showInputDialog(paneFrame,"Which dvd (select by id)? ");
                 int convertedID = Integer.parseInt(ID);
                 DVD dvd = dvddao.retrieveByID(convertedID).get(0);
-                dvddao.changeItemPrice(dvd);
+                dvddao.changeItemGenre(dvd);
             }
         }
         else if(e.getSource()==alterDate)

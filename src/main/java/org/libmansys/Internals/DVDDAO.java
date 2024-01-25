@@ -185,7 +185,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
             preparedStatement.setString(1,scannedName);
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
-            if(rowsUpdated > 0) System.out.println("Title updated!");
+            if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"Title updated!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -201,7 +201,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
             preparedStatement.setInt(1,Integer.parseInt(scannedID));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
-            if(rowsUpdated > 0) System.out.println("ID updated!");
+            if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"ID updated!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -218,7 +218,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
             preparedStatement.setDouble(1,Integer.parseInt(scannedPrice));
             preparedStatement.setInt(2,ID);
             int rowsUpdated = preparedStatement.executeUpdate();
-            if(rowsUpdated > 0) System.out.println("Price updated!");
+            if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"Price updated!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -236,7 +236,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                 preparedStatement.setString(1,scannedGenre);
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
-                if(rowsUpdated > 0) System.out.println("Genre updated!");
+                if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"Genre updated!");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -256,7 +256,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                 preparedStatement.setDate(1,new java.sql.Date(newDate.getTime()));
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
-                if(rowsUpdated > 0) System.out.println("Date updated!");
+                if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"Date updated!");
             } catch (SQLException | ParseException e) {
                 throw new RuntimeException(e);
             }
@@ -274,7 +274,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                 preparedStatement.setString(1,updatedAuthorName);
                 preparedStatement.setInt(2,ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
-                if(rowsUpdated > 0) System.out.println("Director's name updated!");
+                if(rowsUpdated > 0) JOptionPane.showMessageDialog(null,"Director's name updated!");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
