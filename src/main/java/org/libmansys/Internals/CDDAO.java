@@ -7,12 +7,13 @@ import javax.swing.*;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.Scanner;
 
-public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommands {
+public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommands, Rent {
     private final Connection connection;
 
     public CDDAO() {
@@ -279,18 +280,6 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
         }
     }
     @Override
-    public void restockItem(Item item) {
-        int ID = item.getItemID();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET isRented = 0 WHERE id = ?")) {
-            preparedStatement.setInt(1, ID);
-            int rowsUpdated = preparedStatement.executeUpdate();
-            if (rowsUpdated > 0) System.out.println("Item restocked!");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-    @Override
     public void createItem() {
         var scanner = new Scanner(System.in);
         try(PreparedStatement preparedStatement =
@@ -321,23 +310,80 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public boolean isRented(Item item)
     {
         int ID = item.getItemID();
-        int currentIsRentedValue = 0;
-        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT isRented FROM cds WHERE id = ?")) {
+        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT * FROM cds WHERE id = ? AND isRented = 1")) {
             selectStatement.setInt(1, ID);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
-                currentIsRentedValue = resultSet.getInt("isRented");
-                if(currentIsRentedValue == 0) return true;
+                int currentIsRentedValue = resultSet.getInt("isRented");
+                if(currentIsRentedValue == 1) return true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return false;
+    }
+    @Override
+    public void restockItem(Item item) {
+        if(isRented(item))
+        {
+            int ID = item.getItemID();
+            try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds SET isRented = 0 WHERE id = ?")) {
+                preparedStatement.setInt(1, ID);
+                int rowsUpdated = preparedStatement.executeUpdate();
+                if (rowsUpdated > 0) JOptionPane.showMessageDialog(null,("Item restocked!"));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+        {
+            System.out.println("Failed to restock!");
+        }
+
+    }
+    @Override
+    public void rentItem(Item item) {
+        int ID = item.getItemID();
+        if(!isRented(item))
+        {
+            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE cds set isRented = 1 WHERE id = ?")) {
+                preparedStatement.setInt(1,ID);
+                int rowsUpdated = preparedStatement.executeUpdate();
+                if (rowsUpdated > 0)
+                {
+                    try(PreparedStatement innerPreparedStatement = connection.prepareStatement("INSERT INTO rent " +
+                            "(Type, ItemID, ItemName, Renter, RentDate, ReturnDate) VALUES (?, ?, ?, ?, ?, ?)"))
+                    {
+                        String typeOfItem = item.getClass().getSimpleName();
+                        int idOfItem = item.getItemID();
+                        String nameOfItem = item.getItemName();
+                        String nameOfRenter = JOptionPane.showInputDialog("Enter your name");
+                        LocalDate currentDate = LocalDate.now();
+                        LocalDate returnDate = currentDate.plusWeeks(2);
+
+                        java.sql.Date sqlCurrentDate = java.sql.Date.valueOf(currentDate);
+                        java.sql.Date sqlReturnDate = java.sql.Date.valueOf(returnDate);
+
+                        innerPreparedStatement.setString(1,typeOfItem);
+                        innerPreparedStatement.setInt(2,idOfItem);
+                        innerPreparedStatement.setString(3,nameOfItem);
+                        innerPreparedStatement.setString(4,nameOfRenter);
+                        innerPreparedStatement.setDate(5, sqlCurrentDate);
+                        innerPreparedStatement.setDate(6, sqlReturnDate);
+
+                        int rowsInserted = innerPreparedStatement.executeUpdate();
+                        if(rowsInserted > 0 ) JOptionPane.showMessageDialog(null,"You have rented this cd successfully!");
+                    }
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
     public static void main(String[] args)
     {

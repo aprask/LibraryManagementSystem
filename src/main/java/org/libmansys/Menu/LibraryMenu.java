@@ -121,7 +121,7 @@ public class LibraryMenu extends JFrame implements ActionListener {
         rentMenu.add(rentBook);
         rentBook.addActionListener(this);
         rentMenu.add(rentCD);
-        rentMenu.addActionListener(this);
+        rentCD.addActionListener(this);
         rentMenu.add(rentDVD);
         rentDVD.addActionListener(this);
         rentMenu.add(itemRestock);
@@ -158,19 +158,7 @@ public class LibraryMenu extends JFrame implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==rentBook)
-        {
-            JOptionPane.showInputDialog(paneFrame,"Rent Book?");
-        }
-        else if(e.getSource()==rentCD)
-        {
-            JOptionPane.showInputDialog(paneFrame,"Rent CD?");
-        }
-        else if(e.getSource()==rentDVD)
-        {
-            JOptionPane.showInputDialog(paneFrame,"Rent DVD?");
-        }
-        else if(e.getSource()==exitProgram)
+        if(e.getSource()==exitProgram)
         {
             System.exit(0);
         }
@@ -591,17 +579,20 @@ public class LibraryMenu extends JFrame implements ActionListener {
                 dvddao.restockItem(dvddao.retrieveByID(ID).get(0));
             }
         }
-        else if(e.getSource()==rentBook)
+        else if(e.getSource() == rentBook)
         {
             int ID = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            bookdao.rentItem(bookdao.retrieveByID(ID).get(0));
         }
         else if(e.getSource() == rentCD)
         {
             int ID = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            cddao.rentItem(cddao.retrieveByID(ID).get(0));
         }
         else if(e.getSource() == rentDVD)
         {
             int ID = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            dvddao.rentItem(dvddao.retrieveByID(ID).get(0));
         }
     }
     public static void main(String[] args)

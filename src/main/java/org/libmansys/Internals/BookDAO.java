@@ -313,13 +313,12 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
     public boolean isRented(Item item)
     {
         int ID = item.getItemID();
-        int currentIsRentedValue = 0;
-        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT isRented FROM books WHERE id = ?")) {
+        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT * FROM books WHERE id = ? AND isRented = 1")) {
             selectStatement.setInt(1, ID);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
-                currentIsRentedValue = resultSet.getInt("isRented");
-                if(currentIsRentedValue == 0) return true;
+                int currentIsRentedValue = resultSet.getInt("isRented");
+                if(currentIsRentedValue == 1) return true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -334,7 +333,7 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
             try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE books SET isRented = 0 WHERE id = ?")) {
                 preparedStatement.setInt(1, ID);
                 int rowsUpdated = preparedStatement.executeUpdate();
-                if (rowsUpdated > 0) System.out.println("Item restocked!");
+                if (rowsUpdated > 0) JOptionPane.showMessageDialog(null,("Item restocked!"));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -344,39 +343,6 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
             System.out.println("Failed to restock!");
         }
 
-    }
-    @Override
-    public void createItem() {
-        var scanner = new Scanner(System.in);
-            try(PreparedStatement preparedStatement =
-                        connection.prepareStatement
-                                ("INSERT INTO books (title, id, price, author, isbn, publication_date, genre, isRented) " +
-                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"))
-            {
-                String nameOfBook = JOptionPane.showInputDialog("Name? ");
-                int idOfBook = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
-                double priceOfBook = Double.parseDouble(JOptionPane.showInputDialog("Price? "));
-                String authorOfBook = JOptionPane.showInputDialog("Author? ");
-                String isbnOfBook = JOptionPane.showInputDialog("ISBN? ");
-                String dateString = JOptionPane.showInputDialog("Enter a publication date (yyyy-MM-dd): ");
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date dateOfBook = dateFormat.parse(dateString);
-                String genreOfBook = JOptionPane.showInputDialog("Genre of the book? ");
-
-                preparedStatement.setString(1, nameOfBook);
-                preparedStatement.setInt(2,idOfBook);
-                preparedStatement.setDouble(3, priceOfBook);
-                preparedStatement.setString(4, authorOfBook);
-                preparedStatement.setString(5, isbnOfBook);
-                preparedStatement.setDate(6, new java.sql.Date(dateOfBook.getTime()));
-                preparedStatement.setString(7, genreOfBook);
-                preparedStatement.setInt(8, 0);
-
-                int rowsInserted = preparedStatement.executeUpdate();
-                if(rowsInserted > 0 ) System.out.println("Book created successfully!");
-            } catch (SQLException | ParseException e){
-                throw new RuntimeException(e);
-        }
     }
     @Override
     public void rentItem(Item item) {
@@ -401,21 +367,54 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
                         java.sql.Date sqlCurrentDate = java.sql.Date.valueOf(currentDate);
                         java.sql.Date sqlReturnDate = java.sql.Date.valueOf(returnDate);
 
-                        preparedStatement.setString(1,typeOfItem);
-                        preparedStatement.setInt(2,idOfItem);
-                        preparedStatement.setString(3,nameOfItem);
-                        preparedStatement.setString(4,nameOfRenter);
+                        innerPreparedStatement.setString(1,typeOfItem);
+                        innerPreparedStatement.setInt(2,idOfItem);
+                        innerPreparedStatement.setString(3,nameOfItem);
+                        innerPreparedStatement.setString(4,nameOfRenter);
                         innerPreparedStatement.setDate(5, sqlCurrentDate);
                         innerPreparedStatement.setDate(6, sqlReturnDate);
 
-                        int rowsInserted = preparedStatement.executeUpdate();
-                        if(rowsInserted > 0 ) System.out.println("You have rented this book successfully!");
+                        int rowsInserted = innerPreparedStatement.executeUpdate();
+                        if(rowsInserted > 0 ) JOptionPane.showMessageDialog(null,"You have rented this book successfully!");
                     }
 
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+    @Override
+    public void createItem() {
+        var scanner = new Scanner(System.in);
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement
+                            ("INSERT INTO books (title, id, price, author, isbn, publication_date, genre, isRented) " +
+                                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"))
+        {
+            String nameOfBook = JOptionPane.showInputDialog("Name? ");
+            int idOfBook = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
+            double priceOfBook = Double.parseDouble(JOptionPane.showInputDialog("Price? "));
+            String authorOfBook = JOptionPane.showInputDialog("Author? ");
+            String isbnOfBook = JOptionPane.showInputDialog("ISBN? ");
+            String dateString = JOptionPane.showInputDialog("Enter a publication date (yyyy-MM-dd): ");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateOfBook = dateFormat.parse(dateString);
+            String genreOfBook = JOptionPane.showInputDialog("Genre of the book? ");
+
+            preparedStatement.setString(1, nameOfBook);
+            preparedStatement.setInt(2,idOfBook);
+            preparedStatement.setDouble(3, priceOfBook);
+            preparedStatement.setString(4, authorOfBook);
+            preparedStatement.setString(5, isbnOfBook);
+            preparedStatement.setDate(6, new java.sql.Date(dateOfBook.getTime()));
+            preparedStatement.setString(7, genreOfBook);
+            preparedStatement.setInt(8, 0);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if(rowsInserted > 0 ) System.out.println("Book created successfully!");
+        } catch (SQLException | ParseException e){
+            throw new RuntimeException(e);
         }
     }
     public void changeISBNNumber(Book book){
