@@ -1,13 +1,10 @@
 package org.libmansys;
 
-import org.libmansys.Internals.BookDAO;
-import org.libmansys.Internals.CDDAO;
-import org.libmansys.Internals.DVDDAO;
+import org.libmansys.Menu.Login.LoginMenu;
 
 public class Main {
     public static void main(String[] args) {
-        BookDAO bookDAO = new BookDAO();
-        CDDAO cdDAO = new CDDAO();
-        DVDDAO dvdDAO = new DVDDAO();
+        LoginMenu loginMenu = new LoginMenu();
+        loginMenu.runLibraryProgram();
     }
 }

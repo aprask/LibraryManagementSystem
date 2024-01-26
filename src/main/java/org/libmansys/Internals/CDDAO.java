@@ -385,10 +385,4 @@ public class CDDAO implements ReadCommands<CD>, DeleteCommands<CD>, WriteCommand
             }
         }
     }
-    public static void main(String[] args)
-    {
-        CDDAO cddao = new CDDAO();
-        System.out.println(cddao.retrieveAll().get(5).getArtist());
-    }
-
 }

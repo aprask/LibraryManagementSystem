@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class LoginMenu extends JFrame {
 
-    public void buildGUI() {
+    public void runLibraryProgram() {
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -44,10 +44,5 @@ public class LoginMenu extends JFrame {
             if (password.equals(account.getPassword())) return true;
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-        LoginMenu loginMenu = new LoginMenu();
-        loginMenu.buildGUI();
     }
 }

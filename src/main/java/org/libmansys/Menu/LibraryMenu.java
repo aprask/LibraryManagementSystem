@@ -21,7 +21,6 @@ public class LibraryMenu extends JFrame implements ActionListener {
     JMenuItem alterGenre;
     JMenuItem alterDate;
     JMenuItem alterMaker;
-    JMenuItem getAllItems;
     JMenuItem getNames;
     JMenuItem getItemByMaker;
     JMenuItem getItemByID;
@@ -63,7 +62,6 @@ public class LibraryMenu extends JFrame implements ActionListener {
         alterDate = new JMenuItem("Change Item Date");
         alterMaker = new JMenuItem("Change Item Maker");
 
-        getAllItems = new JMenuItem("Retrieve All Items");
         getNames = new JMenuItem("Retrieve All Names");
         getItemByMaker = new JMenuItem("Retrieve Items Based on Maker");
         getItemByID = new JMenuItem("Retrieve Items Based on ID");
@@ -78,8 +76,6 @@ public class LibraryMenu extends JFrame implements ActionListener {
 
 
         menu.add(readMenu);
-        readMenu.add(getAllItems);
-        getAllItems.addActionListener(this);
         readMenu.add(getNames);
         getNames.addActionListener(this);
         readMenu.add(getItemByMaker);
@@ -212,6 +208,31 @@ public class LibraryMenu extends JFrame implements ActionListener {
                 dvddao.changeItemID(dvd);
             }
         }
+        else if(e.getSource()==getAlphabeticalList)
+        {
+            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
+            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
+            {
+                for(int i = 0; i < bookdao.retrieveAll().size(); i++)
+                {
+                    JOptionPane.showMessageDialog(null,bookdao.retrieveInAlphabeticalOrder(bookdao.retrieveAll()).get(i).getItemName());
+                }
+            }
+            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
+            {
+                for(int i = 0; i < bookdao.retrieveAll().size(); i++)
+                {
+                    JOptionPane.showMessageDialog(null,cddao.retrieveInAlphabeticalOrder(cddao.retrieveAll()).get(i).getItemName());
+                }
+            }
+            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
+            {
+                for(int i = 0; i < bookdao.retrieveAll().size(); i++)
+                {
+                    JOptionPane.showMessageDialog(null,dvddao.retrieveInAlphabeticalOrder(dvddao.retrieveAll()).get(i).getItemName());
+                }
+            }
+        }
         else if(e.getSource()==alterPrice)
         {
             String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
@@ -311,22 +332,6 @@ public class LibraryMenu extends JFrame implements ActionListener {
                 int convertedID = Integer.parseInt(ID);
                 DVD dvd = dvddao.retrieveByID(convertedID).get(0);
                 dvddao.changeItemOwner(dvd);
-            }
-        }
-        else if(e.getSource()==getAllItems)
-        {
-            String type = JOptionPane.showInputDialog(paneFrame,"Which type? ");
-            if(type.equalsIgnoreCase(Book.class.getSimpleName()))
-            {
-                JOptionPane.showMessageDialog(null, bookdao.retrieveAll(), "All Items", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else if(type.equalsIgnoreCase(CD.class.getSimpleName()))
-            {
-                JOptionPane.showMessageDialog(null, cddao.retrieveAll(), "All Items", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else if(type.equalsIgnoreCase(DVD.class.getSimpleName()))
-            {
-                JOptionPane.showMessageDialog(null, dvddao.retrieveAll(), "All Items", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else if(e.getSource()==getNames)

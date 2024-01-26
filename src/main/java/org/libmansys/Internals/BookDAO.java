@@ -21,11 +21,6 @@ public class BookDAO implements ReadCommands<Book>, DeleteCommands<Book>, WriteC
     public Connection getConnection() {
         return connection;
     }
-
-    public static void main(String[] args) {
-        BookDAO bookDAO = new BookDAO();
-    }
-
     @Override
     public ArrayList<Book> retrieveAll() {
         ArrayList<Book> books = new ArrayList<>();
