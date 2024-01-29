@@ -30,8 +30,8 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                 String title = resultSet.getString("title");
                 int id = resultSet.getInt("id");
                 double cost = resultSet.getDouble("price");
-                String artist = resultSet.getString("artist");
-                Date publishedDate = resultSet.getDate("publication_date");
+                String artist = resultSet.getString("director");
+                Date publishedDate = resultSet.getDate("release_date");
                 String genre = resultSet.getString("genre");
                 dvds.add(new DVD(title,id,cost,artist,publishedDate,genre));
             }
@@ -71,7 +71,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                     String title = resultSet.getString("title");
                     int id = resultSet.getInt("id");
                     double cost = resultSet.getDouble("price");
-                    Date publishedDate = resultSet.getDate("publication_date");
+                    Date publishedDate = resultSet.getDate("release_date");
                     String genre = resultSet.getString("genre");
                     dvdsBySpecifiedDirector.add(new DVD(title,id,cost,director,publishedDate,genre));
                 }
@@ -93,8 +93,8 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
                 if (ID == id) {
                     String title = resultSet.getString("title");
                     double cost = resultSet.getDouble("price");
-                    String director = resultSet.getString("artist");
-                    Date publishedDate = resultSet.getDate("publication_date");
+                    String director = resultSet.getString("director");
+                    Date publishedDate = resultSet.getDate("release_date");
                     String genre = resultSet.getString("genre");
                     dvdsBySpecifiedID.add(new DVD(title,id,cost,director,publishedDate,genre));
                 }
@@ -247,7 +247,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
     public void changeItemYear(Item item) {
         int ID = item.getItemID();
         if (item instanceof DVD) {
-            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET publication_date = ? WHERE id = ?"))
+            try(PreparedStatement preparedStatement = connection.prepareStatement("UPDATE dvds SET release_date = ? WHERE id = ?"))
             {
                 String message = "Given " + ((DVD) item).getYear() + ", what date would you like to substitute? \n(yyyy-MM-dd): ";
                 String scannedDate = JOptionPane.showInputDialog(message);
@@ -367,7 +367,7 @@ public class DVDDAO implements ReadCommands<DVD>, DeleteCommands<DVD>, WriteComm
             int idOfDVD = Integer.parseInt(JOptionPane.showInputDialog("ID? "));
             double priceOfDVD = Double.parseDouble(JOptionPane.showInputDialog("Price? "));
             String authorOfDVD = JOptionPane.showInputDialog("Author? ");
-            String dateString = JOptionPane.showInputDialog("Enter a publication date (yyyy-MM-dd): ");
+            String dateString = JOptionPane.showInputDialog("Enter a release date (yyyy-MM-dd): ");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date dateOfDVD = dateFormat.parse(dateString);
             String genreOfDVD = JOptionPane.showInputDialog("Genre of the book? ");
